@@ -28,4 +28,10 @@ export class UsersController {
   getMe(@CurrentUser() user: TokenPayload) {
     return user;
   }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getUsers() {
+    return this.usersService.getUsers();
+  }
 }

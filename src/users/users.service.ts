@@ -34,4 +34,8 @@ export class UsersService {
       where: filter,
     });
   }
+
+  async getUsers() {
+    return this.prismaService.user.findMany();
+  }
 }
