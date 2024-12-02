@@ -1,8 +1,15 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { CreateUserRequest } from './dto/create-user.request';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { promises as fs } from 'fs';
+import { join } from 'path';
+import { USER_IMAGES } from './user-images';
 
 @Injectable()
 export class UsersService {
@@ -36,6 +43,34 @@ export class UsersService {
   }
 
   async getUsers() {
-    return this.prismaService.user.findMany();
+    const users = await this.prismaService.user.findMany();
+    return Promise.all(
+      users.map(async (user) => ({
+        ...user,
+        imageExists: await this.imageExists(user.id),
+      })),
+    );
+  }
+
+  async getUserById(userId: number) {
+    try {
+      return {
+        ...(await this.prismaService.user.findUniqueOrThrow({
+          where: { id: userId },
+        })),
+        imageExists: await this.imageExists(userId),
+      };
+    } catch (error) {
+      throw new NotFoundException(`User not found with Id: ${userId}`);
+    }
+  }
+
+  private async imageExists(userId: number) {
+    try {
+      await fs.access(join(`${USER_IMAGES}/${userId}.jpg`), fs.constants.F_OK);
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

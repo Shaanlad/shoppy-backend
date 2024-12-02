@@ -4,6 +4,7 @@ import {
   FileTypeValidator,
   Get,
   MaxFileSizeValidator,
+  Param,
   ParseFilePipe,
   Post,
   UploadedFile,
@@ -18,6 +19,7 @@ import { CurrentUser } from 'src/auth/current-user.decorator';
 import { TokenPayload } from 'src/auth/token-payload.interface';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { USER_IMAGES } from './user-images';
 
 @Controller('users')
 export class UsersController {
@@ -35,18 +37,12 @@ export class UsersController {
     return user;
   }
 
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  async getUsers() {
-    return this.usersService.getUsers();
-  }
-
   @Post(':userId/image')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
-        destination: 'public/users',
+        destination: USER_IMAGES,
         filename: (req, file, callback) => {
           callback(null, `${req.params.userId}${extname(file.originalname)}`);
         },
@@ -64,4 +60,16 @@ export class UsersController {
     )
     _file: Express.Multer.File,
   ) {}
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getUsers() {
+    return this.usersService.getUsers();
+  }
+
+  @Get(':userId')
+  @UseGuards(JwtAuthGuard)
+  async getUserById(@Param('userId') userId: string) {
+    return this.usersService.getUserById(+userId);
+  }
 }
