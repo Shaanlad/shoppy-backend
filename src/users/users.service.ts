@@ -61,6 +61,7 @@ export class UsersService {
         imageExists: await this.imageExists(userId),
       };
     } catch (error) {
+      console.log('Error occured while fetching user >> ', error);
       throw new NotFoundException(`User not found with Id: ${userId}`);
     }
   }
@@ -70,6 +71,7 @@ export class UsersService {
       await fs.access(join(`${USER_IMAGES}/${userId}.jpg`), fs.constants.F_OK);
       return true;
     } catch (error) {
+      console.log('Error occured while checking image >> ', error);
       return false;
     }
   }
