@@ -25,6 +25,7 @@ export class UsersService {
         select: {
           email: true,
           id: true,
+        //   hourlyWorkRate: true,
         },
       });
     } catch (err) {
