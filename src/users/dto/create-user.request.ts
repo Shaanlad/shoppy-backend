@@ -8,7 +8,7 @@ export class CreateUserRequest {
   @IsStrongPassword()
   password: string;
 
-  @IsNumber()
-  @Type(() => Number)
-  hourlyWorkRate: number;
+  // @IsNumber()
+  // @Type(() => Number)
+  // hourlyWorkRate: number;
 }
