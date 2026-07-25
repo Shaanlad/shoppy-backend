@@ -8,11 +8,15 @@ export class ProductsService {
   async createProduct(data: CreateProductRequest, userId: number) {
     console.log('Inside createProduct');
 
-    // return this.prismaService.product.create({
-    //   data: {
-    //     ...data,
-    //     userId,
-    //   },
-    // });
+    return this.prismaService.product.create({
+      data: {
+        ...data,
+        userId,
+      },
+    });
+  }
+
+  async getAllProducts() {
+    return this.prismaService.product.findMany();
   }
 }
