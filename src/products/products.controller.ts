@@ -19,6 +19,7 @@ export class ProductsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   async getAllProducts() {
     return this.productsService.getAllProducts();
   }
