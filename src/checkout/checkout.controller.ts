@@ -10,8 +10,6 @@ export class CheckoutController {
   @Post('session')
   @UseGuards(JwtAuthGuard)
   async createCheckoutSession(@Body() request: CreateSessionRequest) {
-    return this.createCheckoutSession(request.productId);
-    // Implement the logic to create a checkout session with Stripe
-    // You can use the Stripe SDK to create a session and return the session ID
+    return this.checkoutService.createCheckoutSession(request.productId);
   }
 }
