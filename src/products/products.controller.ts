@@ -7,6 +7,7 @@ import {
   Param,
   ParseFilePipe,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -36,8 +37,11 @@ export class ProductsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getAllProducts() {
-    return this.productsService.getAllProducts();
+  async getAllProducts(
+    @Query('status') status?: string
+  ) {
+    console.log('Status query parameter:', status);
+    return this.productsService.getAllProducts(status);
   }
 
   @Get(':productId')
