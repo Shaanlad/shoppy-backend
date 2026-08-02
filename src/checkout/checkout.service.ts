@@ -15,6 +15,9 @@ export class CheckoutService {
     // Fetch the product details using the productId
     const product = await this.productService.getProduct(productId);
     return this.stripe.checkout.sessions.create({
+      metadata: {
+        productId,
+      },
       payment_method_types: ['card'],
       line_items: [
         {
@@ -33,5 +36,21 @@ export class CheckoutService {
       success_url: this.configService.getOrThrow('STRIPE_SUCCESS_URL'),
       cancel_url: this.configService.getOrThrow('STRIPE_CANCEL_URL'),
     });
+  }
+
+  async handleCheckoutWebhook(payload: any) {
+    if (payload.type !== 'checkout.session.completed') {
+      return;
+    }
+
+    console.log('Received Stripe webhook event:', payload);
+    const session = await this.stripe.checkout.sessions.retrieve(
+      payload.data.object.id,
+    );
+    // const productId = parseInt(session.metadata.productId, 10);
+    await this.productService.updateProduct(
+      parseInt(session.metadata.productId),
+      { sold: true },
+    );
   }
 }

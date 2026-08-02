@@ -12,4 +12,9 @@ export class CheckoutController {
   async createCheckoutSession(@Body() request: CreateSessionRequest) {
     return this.checkoutService.createCheckoutSession(request.productId);
   }
+
+  @Post('webhook')
+  async handleCheckoutWebhook(@Body() payload: any) {
+    return this.checkoutService.handleCheckoutWebhook(payload);
+  }
 }
