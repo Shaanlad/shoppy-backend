@@ -39,7 +39,7 @@ export class CheckoutService {
   }
 
   async handleCheckoutWebhook(payload: any) {
-    console.log('Received Stripe webhook event:', payload);
+    
     if (payload.type !== 'checkout.session.completed') {
       return;
     }
@@ -48,8 +48,6 @@ export class CheckoutService {
       payload.data.object.id,
     );
 
-    console.log('Retrieved session:', session);
-    
     await this.productService.updateProduct(
       parseInt(session.metadata.productId),
       { sold: true },

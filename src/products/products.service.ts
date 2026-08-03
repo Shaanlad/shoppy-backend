@@ -5,19 +5,25 @@ import { Prisma } from '@prisma/client';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { PRODUCT_IMAGES } from './product-images';
+import { ProductGateway } from './product.gateway';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService, 
+    private readonly productGateway: ProductGateway,
+  ) {}
   async createProduct(data: CreateProductRequest, userId: number) {
     console.log('Inside createProduct');
 
-    return this.prismaService.product.create({
+    const product = await this.prismaService.product.create({
       data: {
         ...data,
         userId,
       },
     });
+    this.productGateway.handleProductUpdated();
+    return product;
   }
 
   async getAllProducts(status?: string) {
@@ -71,5 +77,6 @@ export class ProductsService {
       },
       data,
     });
+    this.productGateway.handleProductUpdated();
   }
 }
